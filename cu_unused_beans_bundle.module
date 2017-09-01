@@ -36,7 +36,11 @@ function cu_unused_beans_bundle_list() {
 
   $references = array();
   // Get all bean ids.
-  $all_beans = cu_unused_beans_bundle_get_all_beans();
+  if (cu_unused_beans_bundle_get_all_beans()) {
+    $all_beans = cu_unused_beans_bundle_get_all_beans();
+  } else {
+    $all_beans = array();
+  }
 
   // Get all unused_beans hooks.
   $hooks = module_invoke_all('unused_beans', $vars = NULL);
@@ -63,13 +67,16 @@ function cu_unused_beans_bundle_list() {
 
   $output['description']['#markup'] = '<p>The following ' . count($results) . ' blocks may be unused on your site.</p>';
   $output['list']['#markup'] = '';
-  foreach ($labels as $label) {
-    $type = $bean_types[$label->type]['label'];
-    $output['list']['#markup'] .= '<li>' . l($label->label . ' (' . $type, 'block/' . $label->delta) . ')</li>';
-  }
-  $output['list']['#markup'] = '<ul class="bullet-list">' . $output['list']['#markup'] . '</ul>';
 
-  $output['description2']['#markup'] = '<p></p><p><em>Blocks listed above are not inlcuded in entity references or enabled contexts. Delete at your own risk.</em></p>';
+  if (cu_unused_beans_bundle_get_all_beans()) {
+    foreach ($labels as $label) {
+      $type = $bean_types[$label->type]['label'];
+      $output['list']['#markup'] .= '<li>' . l($label->label . ' (' . $type, 'block/' . $label->delta) . ')</li>';
+    }
+    $output['list']['#markup'] = '<ul class="bullet-list">' . $output['list']['#markup'] . '</ul>';
+
+    $output['description2']['#markup'] = '<p></p><p><em>Blocks listed above are not inlcuded in entity references or enabled contexts. Delete at your own risk.</em></p>';
+  }
 
   if (!empty($hooks)) {
     ksort($hooks);
@@ -220,10 +227,12 @@ function cu_unused_beans_bundle_get_all_beans() {
 }
 
 function cu_unused_beans_bundle_get_beans_labels($bean_ids) {
-  $query = db_select('bean', 'b')
-  ->fields('b', array('bid', 'label', 'delta', 'type'))
-  ->condition('b.bid', $bean_ids, 'IN')
-  ->execute()
-  ->fetchAll();
-  return $query;
+  if (cu_unused_beans_bundle_get_all_beans()) {
+    $query = db_select('bean', 'b')
+      ->fields('b', array('bid', 'label', 'delta', 'type'))
+      ->condition('b.bid', $bean_ids, 'IN')
+      ->execute()
+      ->fetchAll();
+    return $query;
+  }
 }
