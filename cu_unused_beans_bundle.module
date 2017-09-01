@@ -193,10 +193,10 @@ function cu_unused_beans_bundle_get_context_blocks() {
   }
   if (!empty($context_blocks)) {
     $results = db_select('bean', 'b')
-    ->fields('b', array('bid', 'delta'))
-    ->condition('b.delta', $context_blocks, 'IN')
-    ->execute()
-    ->fetchCol();
+      ->fields('b', array('bid', 'delta'))
+      ->condition('b.delta', $context_blocks, 'IN')
+      ->execute()
+      ->fetchCol();
   }
   return $results;
 }
@@ -204,14 +204,14 @@ function cu_unused_beans_bundle_get_context_blocks() {
 function cu_unused_beans_bundle_get_beans($vars) {
   $query = array();
   if (!empty($vars['callback'])) {
-     $query = call_user_func($vars['callback']);
+    $query = call_user_func($vars['callback']);
   }
   elseif (!empty($vars['table']) && !empty($vars['column'])) {
     if (db_field_exists($vars['table'], $vars['column'])) {
       $query = db_select($vars['table'], 't')
-      ->fields('t', array($vars['column']))
-      ->execute()
-      ->fetchCol();
+        ->fields('t', array($vars['column']))
+        ->execute()
+        ->fetchCol();
     }
   }
   return $query;
@@ -219,9 +219,9 @@ function cu_unused_beans_bundle_get_beans($vars) {
 
 function cu_unused_beans_bundle_get_all_beans() {
   $query = db_select('bean', 'b')
-  ->fields('b', array('bid'))
-  ->execute()
-  ->fetchCol();
+    ->fields('b', array('bid'))
+    ->execute()
+    ->fetchCol();
 
   return $query;
 }
